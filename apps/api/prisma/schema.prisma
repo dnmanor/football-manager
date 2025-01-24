@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  name         String?
+  password     String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  team         Team?         @relation("ManagerTeam")
+  transactions Transaction[]
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  name      String
+  budget    Float    @default(5000000)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId       String        @unique
+  user         User          @relation("ManagerTeam", fields: [userId], references: [id])
+  players      Player[]
+  transactions Transaction[]
+
+  @@index([userId])
+}
+
+model Player {
+  id          String   @id @default(cuid())
+  name        String
+  position    Position
+  realTeam    String
+  price       Float
+  points      Int      @default(0)
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  teamId       String?
+  team         Team?         @relation(fields: [teamId], references: [id])
+  transactions Transaction[]
+
+  @@index([teamId])
+}
+
+model Transaction {
+  id        String          @id @default(cuid())
+  type      TransactionType
+  amount    Float
+  createdAt DateTime        @default(now())
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+  teamId   String
+  team     Team   @relation(fields: [teamId], references: [id])
+  playerId String
+  player   Player @relation(fields: [playerId], references: [id])
+
+  @@index([userId])
+  @@index([teamId])
+  @@index([playerId])
+}
+
+enum Position {
+  GOALKEEPER
+  DEFENDER
+  MIDFIELDER
+  FORWARD
+}
+
+enum TransactionType {
+  BUY
+  SELL
+}
