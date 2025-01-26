@@ -3,6 +3,7 @@ import * as dotenv from "dotenv";
 import app from "./app";
 import { validateEnv } from "./lib/validateEnv";
 import { connectDB } from "./lib/db";
+import { startPlayerGenerationService } from "./services/player.service";
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ const port = process.env.PORT || 8000;
 
 async function startServer() {
   await connectDB();
+  await startPlayerGenerationService();
 
   app.get("/health", (req: Request, res: Response) => {
     res.send({ system: "OK" });

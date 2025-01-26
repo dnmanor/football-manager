@@ -5,6 +5,7 @@ import { LoginInput } from "../types";
 import { prisma } from "../lib/db";
 import { z } from "zod";
 import { handleValidationError } from "../lib/helpers";
+import { RabbitMQService } from "../services/queue.service";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email format"),
@@ -36,6 +37,8 @@ export const login = async (req: Request, res: Response) => {
           name: name || email.split("@")[0],
         },
       });
+
+      await RabbitMQService.getInstance().publishUserCreated(user.id)
     } else {
       const isValidPassword = await compare(password, user.password);
       if (!isValidPassword) {
