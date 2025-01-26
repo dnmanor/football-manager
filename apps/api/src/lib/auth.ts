@@ -1,6 +1,8 @@
+import * as dotenv from "dotenv";
 import { Response } from "express";
-import jwt from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
 
+dotenv.config();
 const secretKey = process.env.JWT_SECRET_KEY!;
 if (!secretKey) {
   throw new Error("JWT_SECRET_KEY is not set");
