@@ -1,18 +1,20 @@
-import { Request, Response, NextFunction } from 'express';
-import { verifySession } from '../lib/auth';
+import { Request, Response, NextFunction } from "express";
+import { verifySession } from "../lib/auth";
 
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies.session;
+  const token = req.cookies.bofrot;
 
   if (!token) {
-    return res.status(401).json({ error: "Unauthorized" });
+    res.status(401).json({ error: "Unauthorized" });
+    return;
   }
 
   const session = verifySession(token);
   if (!session) {
-    return res.status(401).json({ error: "Invalid session" });
+    res.status(401).json({ error: "Invalid session" });
+    return;
   }
 
   req.userId = session.userId;
   next();
-} 
+}

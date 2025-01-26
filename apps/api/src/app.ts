@@ -1,14 +1,15 @@
-import express from 'express';
-import cookieParser from 'cookie-parser';
-import authRoutes from './routes/auth.routes';
-import { requireAuth } from './middleware/auth';
+import express from "express";
+import cookieParser from "cookie-parser";
+import authRoutes from "./routes/auth.routes";
+import playerRoutes from "./routes/player.routes";
+import { requireAuth } from "./middleware/auth";
 
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/api/auth', authRoutes);
-// app.use('/api', requireAuth);
+app.use("/api/auth", authRoutes);
+app.use("/api/player", playerRoutes);
 
-export default app; 
+export default app;
