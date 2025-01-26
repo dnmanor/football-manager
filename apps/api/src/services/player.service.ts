@@ -17,8 +17,13 @@ const PRICE_RANGES = {
   FORWARD: { min: 3000000, max: 15000000 },
 };
 
+const ARTIFICIAL_FIVE_SECONDS_DELAY = 5000;
+
 export async function generatePlayersForUser(userId: string) {
   const players = [];
+  await new Promise((resolve) =>
+    setTimeout(resolve, ARTIFICIAL_FIVE_SECONDS_DELAY)
+  );
 
   for (let i = 0; i < DEFAULT_CONFIG.goalkeepers; i++) {
     players.push(createPlayer("GOALKEEPER"));
