@@ -52,3 +52,9 @@ cd ../../ && yarn dev
 Other Features
 - [x] Logging
 
+## Time reporting
+
+- 30 mins Thursday (23rd) to plan the technical details (plan schema, api implementation, tech stack) and setup app.
+- 30 mins Friday (24th) to add schema and base auth implementation.
+- 5 hours 35 mins Sunday (26th) to implement the api and parts of the webapp.
+- 6 hours Monday (27th) to integrate the api and webapp and clean up ui a bit, test and document project.
