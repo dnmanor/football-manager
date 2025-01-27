@@ -6,6 +6,8 @@ import { prisma } from "../lib/db";
 import { z } from "zod";
 import { handleValidationError } from "../lib/helpers";
 import { RabbitMQService } from "../services/queue.service";
+import logger from "../services/logs.service";
+
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email format"),
@@ -18,6 +20,7 @@ export const login = async (req: Request, res: Response) => {
     const result = loginSchema.safeParse(req.body);
 
     if (!result.success) {
+      logger.warn(`Login validation failed for email: ${req.body.email}`);
       res.status(400).json(handleValidationError(result));
       return;
     }
@@ -38,10 +41,12 @@ export const login = async (req: Request, res: Response) => {
         },
       });
 
-      await RabbitMQService.getInstance().publishUserCreated(user.id)
+      await RabbitMQService.getInstance().publishUserCreated(user.id);
+      logger.info(`New user created with email: ${email}`);
     } else {
       const isValidPassword = await compare(password, user.password);
       if (!isValidPassword) {
+        logger.warn(`Invalid login attempt for email: ${email}`);
         res.status(401).json({ error: "Invalid credentials" });
         return;
       }
@@ -56,6 +61,7 @@ export const login = async (req: Request, res: Response) => {
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
 
+    logger.info(`User logged in with email: ${email}`);
     res.json({
       user: {
         id: user.id,
@@ -64,7 +70,7 @@ export const login = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error("Login error:", error);
+    logger.error(`Login error for email: ${req.body.email} - ${error}`);
     res.status(500).json({ error: "Internal server error" });
   }
 };

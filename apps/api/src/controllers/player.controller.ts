@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { prisma } from "../lib/db";
 import { z } from "zod";
 import { handleValidationError } from "../lib/helpers";
+import logger from "../services/logs.service";
+
 
 const updatePlayerSchema = z
   .object({
@@ -20,6 +22,7 @@ export const updatePlayerRecord = async (req: Request, res: Response) => {
   try {
     const playerId = req.params.id;
     if (!playerId) {
+      logger.warn("Invalid player ID provided for update");
       res.status(400).json({ error: "Invalid player ID" });
       return;
     }
@@ -27,6 +30,7 @@ export const updatePlayerRecord = async (req: Request, res: Response) => {
     const result = updatePlayerSchema.safeParse(req.body);
 
     if (!result.success) {
+      logger.warn(`Validation failed for player update: ${JSON.stringify(req.body)}`);
       res.status(400).json(handleValidationError(result));
       return;
     }
@@ -36,12 +40,11 @@ export const updatePlayerRecord = async (req: Request, res: Response) => {
       data: result.data,
     });
 
+    logger.info(`Player updated successfully: ${playerId}`);
     res.status(200).json(updatedPlayer);
-    return;
   } catch (error) {
-    console.error("Error updating player:", error);
+    logger.error(`Error updating player ${req.params.id}: ${error}`);
     res.status(500).json({ error: "Internal server error" });
-    return;
   }
 };
 
@@ -49,6 +52,7 @@ export const purchasePlayer = async (req: Request, res: Response) => {
   try {
     const playerId = req.params.id;
     if (!playerId) {
+      logger.warn("Invalid player ID provided for purchase");
       res.status(400).json({ error: "Invalid player ID" });
       return;
     }
@@ -59,11 +63,13 @@ export const purchasePlayer = async (req: Request, res: Response) => {
     });
 
     if (!player) {
+      logger.warn(`Player not found for purchase: ${playerId}`);
       res.status(404).json({ error: "Player not found" });
       return;
     }
 
     if (!player.available_for_transfer) {
+      logger.warn(`Player not available for transfer: ${playerId}`);
       res.status(400).json({ error: "Player is not available for transfer" });
       return;
     }
@@ -75,6 +81,7 @@ export const purchasePlayer = async (req: Request, res: Response) => {
       });
 
       if (sellerTeam && sellerTeam.players.length <= 15) {
+        logger.warn(`Selling team cannot have less than 15 players: ${player.teamId}`);
         res
           .status(400)
           .json({ error: "Selling team cannot have less than 15 players" });
@@ -88,11 +95,13 @@ export const purchasePlayer = async (req: Request, res: Response) => {
     });
 
     if (!buyerTeam) {
+      logger.warn(`Buyer team not found for user: ${req.userId}`);
       res.status(404).json({ error: "Buyer team not found" });
       return;
     }
 
     if (buyerTeam.players.length >= 25) {
+      logger.warn(`Team already has maximum number of players: ${buyerTeam.id}`);
       res
         .status(400)
         .json({ error: "Team already has maximum number of players" });
@@ -102,6 +111,7 @@ export const purchasePlayer = async (req: Request, res: Response) => {
     const purchasePrice = player.price * 0.95;
 
     if (buyerTeam.budget < purchasePrice) {
+      logger.warn(`Insufficient funds for purchase by team: ${buyerTeam.id}`);
       res.status(400).json({ error: "Insufficient funds" });
       return;
     }
@@ -147,9 +157,10 @@ export const purchasePlayer = async (req: Request, res: Response) => {
       return updatedPlayer;
     });
 
+    logger.info(`Player purchased successfully: ${playerId} by team: ${buyerTeam.id}`);
     res.status(200).json(transaction);
   } catch (error) {
-    console.error("Error purchasing player:", error);
+    logger.error(`Error purchasing player ${req.params.id}: ${error}`);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -166,9 +177,10 @@ export const getAvailablePlayers = async (req: Request, res: Response) => {
         },
       },
     });
+    logger.info("Fetched available players");
     res.status(200).json(players);
   } catch (error) {
-    console.error("Error fetching available players:", error);
+    logger.error(`Error fetching available players: ${error}`);
     res.status(500).json({ error: "Internal server error" });
   }
 };
