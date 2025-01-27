@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import {useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
 import PlayerCard from "../../components/PlayerCard";
 import DataSnippetHeader from "../../components/DataSnippet";
 import FieldDisplay from "../../components/FieldDisplay";
@@ -79,23 +79,23 @@ export default function MyTeamPage() {
 
   return (
     <div>
-      <DataSnippetHeader
-        budget={userData?.team.budget}
-        team_name={userData?.team.name}
-      />
-      <div className="px-12 gap-4 flex flex-col py-6">
-        <h2 className="text-2xl font-semibold">My Team</h2>
-        {players.map((player) => (
-          <PlayerCard
-            key={player.id}
-            name={player.name}
-            position={player.position}
-            price={player.price}
-            available_for_transfer={player.available_for_transfer}
-            id={player.id}
-            team={player.team}
-          />
-        ))}
+      <DataSnippetHeader budget={userData?.team.budget} team_name={userData?.team.name} />
+      <div className="px-4 sm:px-8 md:px-12 gap-4 flex flex-col py-4 sm:py-6 md:py-0 mb-12">
+        <h2 className="text-xl sm:text-2xl font-semibold">My Team</h2>
+
+        <div className="flex flex-wrap justify-center sm:justify-start gap-3 sm:gap-4">
+          {players.map((player) => (
+            <PlayerCard
+              key={player.id}
+              name={player.name}
+              position={player.position}
+              price={player.price}
+              available_for_transfer={player.available_for_transfer}
+              id={player.id}
+              team={player.team}
+            />
+          ))}
+        </div>
       </div>
       <FieldDisplay players={players} />
     </div>

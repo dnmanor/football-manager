@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Player } from "../my-team/page";
+import React, {useEffect, useState} from "react";
+import {Player} from "../my-team/page";
 import PlayerCard from "../../components/PlayerCard";
-import { useFilter } from "../../context/FilterContext";
-import { Input } from "@repo/ui/components/input";
+import {useFilter} from "../../context/FilterContext";
+import {Input} from "@repo/ui/components/input";
 
 interface User {
   id: string;
@@ -20,9 +20,10 @@ interface User {
 const MarketPage = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [user, setUser] = useState<User | null>(null);
-  const { searchTerm, setSearchTerm } = useFilter();
+  const {searchTerm, setSearchTerm} = useFilter();
   const [selectedTeam, setSelectedTeam] = useState<string>("all");
   const [loading, setLoading] = useState(true);
+
   const fetchData = async () => {
     try {
       const [playersResponse, userResponse] = await Promise.all([
@@ -61,8 +62,7 @@ const MarketPage = () => {
       player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       player.team.name.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesTeam =
-      selectedTeam === "all" || player.team.name === selectedTeam;
+    const matchesTeam = selectedTeam === "all" || player.team.name === selectedTeam;
 
     return matchesSearchTerm && matchesTeam;
   });
@@ -71,9 +71,14 @@ const MarketPage = () => {
     return <div>Loading...</div>; // Prevent rendering until user and team data are available
   }
 
+  const handleRemovePlayer = (playerId: string) => {
+    console.log("playerId =>", playerId);
+    setPlayers((prevPlayers) => prevPlayers.filter((player) => player.id !== playerId));
+  };
+
   return (
-    <div className="px-12 gap-4 flex flex-col py-6">
-      <h2 className="text-2xl font-semibold">Market</h2>
+    <div className="px-4 md:px-12 gap-4 flex flex-col py-6">
+      <h2 className="text-xl md:text-2xl font-semibold">Market</h2>
       <div className="mb-4">
         <Input
           type="text"
@@ -84,27 +89,31 @@ const MarketPage = () => {
         />
         <div className="mb-4">
           <h3 className="font-semibold">Teams</h3>
-          {prepareTeamsList().map((team) => (
-            <div key={team} className="flex items-center capitalize text-sm">
-              <input
-                type="checkbox"
-                checked={selectedTeam === team}
-                onChange={() => setSelectedTeam(team)}
-                className="mr-2"
-              />
-              <label>{team}</label>
-            </div>
-          ))}
+          <div className="flex flex-wrap gap-4">
+            {prepareTeamsList().map((team) => (
+              <div key={team} className="flex items-center capitalize text-sm">
+                <input
+                  type="checkbox"
+                  checked={selectedTeam === team}
+                  onChange={() => setSelectedTeam(team)}
+                  className="mr-2"
+                />
+                <label className="truncate">{team}</label>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="grid grid-cols-1 gap-4">
+        <div className="flex flex-wrap gap-4">
           {user?.team?.budget !== undefined &&
             filteredPlayers.map((player) => (
               <PlayerCard
                 key={player.id}
                 {...player}
-                market
+                isOnMarket
                 budget={user.team.budget}
                 onPurchaseComplete={fetchData}
+                isOwnPlayer={player.teamId === user.team.id}
+                onRemovePlayer={handleRemovePlayer}
               />
             ))}
         </div>
@@ -112,6 +121,5 @@ const MarketPage = () => {
     </div>
   );
 };
-
 
 export default MarketPage;

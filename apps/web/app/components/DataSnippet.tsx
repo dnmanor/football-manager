@@ -6,11 +6,13 @@ type DataSnippetProps = {
   budget?: number;
 };
 
-const DataSnippetHeader = ({ team_name, budget }: DataSnippetProps) => {
+const DataSnippetHeader = ({team_name, budget}: DataSnippetProps) => {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center items-start sm:justify-between px-12">
-      <div className="text-2xl">{team_name ?? "User FC"}</div>
-      <div className="font-bold text-gray-500 text-lg">${budget ?? 0}</div>
+    <div className="flex flex-col gap-2 px-4 py-4 md:flex-row md:items-center md:justify-between md:px-12">
+      <div className="text-xl md:text-2xl font-semibold">{team_name ?? "User FC"}</div>
+      <div className="font-bold text-gray-500 text-base md:text-lg">
+        ${budget?.toFixed(2) ?? "0.00"}
+      </div>
     </div>
   );
 };

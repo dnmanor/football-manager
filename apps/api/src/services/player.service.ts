@@ -1,7 +1,7 @@
-import { faker } from "@faker-js/faker";
-import { Position } from "@prisma/client";
+import {faker} from "@faker-js/faker";
+import {Position} from "@prisma/client";
 import prisma from "../client";
-import { RabbitMQService } from "./queue.service";
+import {RabbitMQService} from "./queue.service";
 
 const DEFAULT_CONFIG = {
   goalkeepers: 3,
@@ -11,19 +11,17 @@ const DEFAULT_CONFIG = {
 };
 
 const PRICE_RANGES = {
-  GOALKEEPER: { min: 1000000, max: 500000 },
-  DEFENDER: { min: 1000000, max: 800000 },
-  MIDFIELDER: { min: 2000000, max: 1000000 },
-  FORWARD: { min: 3000000, max: 1500000 },
+  GOALKEEPER: {min: 100000, max: 500000},
+  DEFENDER: {min: 100000, max: 800000},
+  MIDFIELDER: {min: 200000, max: 1000000},
+  FORWARD: {min: 300000, max: 1500000},
 };
 
 const ARTIFICIAL_FIVE_SECONDS_DELAY = 5000;
 
 export async function generatePlayersForUser(userId: string) {
   const players = [];
-  await new Promise((resolve) =>
-    setTimeout(resolve, ARTIFICIAL_FIVE_SECONDS_DELAY)
-  );
+  await new Promise((resolve) => setTimeout(resolve, ARTIFICIAL_FIVE_SECONDS_DELAY));
 
   for (let i = 0; i < DEFAULT_CONFIG.goalkeepers; i++) {
     players.push(createPlayer("GOALKEEPER"));
@@ -76,6 +74,6 @@ function createPlayer(position: Position) {
   return {
     name: faker.person.fullName(),
     position,
-    price: faker.number.int({ min: priceRange.min, max: priceRange.max }),
+    price: faker.number.int({min: priceRange.min, max: priceRange.max}),
   };
 }

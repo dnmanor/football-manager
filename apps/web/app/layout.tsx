@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type {Metadata} from "next";
 import localFont from "next/font/local";
 import "@repo/ui/globals.css";
+import {Toaster} from "sonner";
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -24,9 +25,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       {/* <body className={`${geistSans.variable} ${geistMono.variable}`}> */}
-      <body>
-        {children}
-      </body>
+      <Toaster />
+      <body>{children}</body>
     </html>
   );
 }
