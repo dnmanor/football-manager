@@ -6,7 +6,7 @@ const FieldDisplay = ({players}: {players: Player[]}) => {
       key={player.id}
       className="bg-gradient-to-br from-blue-500 to-blue-700 text-white px-1 py-1.5 text-[10px] sm:text-xs sm:px-1.5 sm:py-2 rounded-full text-center w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center shadow-lg hover:scale-105 transition-transform duration-200 font-medium"
     >
-      {player.name.split(" ")[0].substring(0, 8)}
+      {player.name.split(" ")[0]?.substring(0, 8)}
     </div>
   );
 

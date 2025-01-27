@@ -89,7 +89,7 @@ export function PurchasePlayerButton({
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Discount:</span>
-              <span>10%</span>
+              <span>5%</span>
             </div>
             <Button className="mt-4" onClick={handlePurchase}>
               Confirm

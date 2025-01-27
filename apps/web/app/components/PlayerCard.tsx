@@ -43,7 +43,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
 }) => {
   const [available, setAvailable] = useState(available_for_transfer);
   const [editablePrice, setEditablePrice] = useState(price);
-  const discountedPrice = price * 0.9;
+  const discountedPrice = price * 0.95;
 
   const updatePlayerAvailability = async () => {
     try {
