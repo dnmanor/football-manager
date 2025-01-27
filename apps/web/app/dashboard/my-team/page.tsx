@@ -2,63 +2,67 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import PlayerCard from "../../components/PlayerCard";
 import DataSnippetHeader from "../../components/DataSnippet";
 
-type Team = {
+export interface Player {
   id: string;
   name: string;
-  budget: number;
+  position: "GOALKEEPER" | "DEFENDER" | "MIDFIELDER" | "FORWARD";
+  price: number;
+  available_for_transfer: boolean;
   createdAt: string;
   updatedAt: string;
-  userId: string;
-};
+  teamId: string;
+}
 
-type User = {
+interface User {
   id: string;
   email: string;
   name: string;
-  team: Team;
-};
-
-type UserResponse = {
-  user: User;
-};
+  team: {
+    id: string;
+    name: string;
+    budget: number;
+  };
+}
 
 export default function MyTeamPage() {
+  const [players, setPlayers] = useState<Player[]>([]);
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    const fetchTeamData = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`,
-          {
+        const [userResponse, teamResponse] = await Promise.all([
+          fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
             credentials: "include",
-          }
-        );
+          }),
+          fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/team`, {
+            credentials: "include",
+          }),
+        ]);
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch team data");
+        if (!userResponse.ok || !teamResponse.ok) {
+          throw new Error("Failed to fetch data");
         }
 
-        const data = (await response.json()) as UserResponse;
-        console.log(data);
-        if (data.user) {
-          setUserData(data.user);
-        } else {
-          throw new Error("No team data available");
-        }
+        const userData = await userResponse.json();
+        const teamData = await teamResponse.json();
+
+        setUserData(userData.user);
+        setPlayers(teamData);
       } catch (err) {
-        setError("Something went wrong while fetching your team data");
+        setError("Something went wrong while fetching your data");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTeamData();
+    fetchData();
   }, [router]);
 
   if (loading) {
@@ -71,9 +75,22 @@ export default function MyTeamPage() {
 
   return (
     <div>
-
-        <DataSnippetHeader team_name={userData?.team.name} budget={userData?.team.budget} />
-
+      <DataSnippetHeader
+        budget={userData?.team.budget}
+        team_name={userData?.team.name}
+      />
+      <div className="px-12 gap-4 flex flex-col py-6">
+        {players.map((player) => (
+          <PlayerCard
+            key={player.id}
+            name={player.name}
+            position={player.position}
+            price={player.price}
+            available_for_transfer={player.available_for_transfer}
+            id={player.id}
+          />
+        ))}
+      </div>
     </div>
   );
 }

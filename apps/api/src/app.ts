@@ -2,6 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.routes";
 import playerRoutes from "./routes/player.routes";
+import userRoutes from "./routes/user.routes";
 import cors from "cors";
 import dotenv from "dotenv";
 
@@ -26,5 +27,6 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/player", playerRoutes);
+app.use("/api/user", userRoutes);
 
 export default app;
