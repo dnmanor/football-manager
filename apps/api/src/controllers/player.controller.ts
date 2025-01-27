@@ -153,3 +153,22 @@ export const purchasePlayer = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+export const getAvailablePlayers = async (req: Request, res: Response) => {
+  try {
+    const players = await prisma.player.findMany({
+      where: { available_for_transfer: true },
+      include: {
+        team: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+    res.status(200).json(players);
+  } catch (error) {
+    console.error("Error fetching available players:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

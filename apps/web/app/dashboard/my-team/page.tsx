@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PlayerCard from "../../components/PlayerCard";
 import DataSnippetHeader from "../../components/DataSnippet";
+import FieldDisplay from "../../components/FieldDisplay";
 
 export interface Player {
   id: string;
@@ -14,9 +15,12 @@ export interface Player {
   createdAt: string;
   updatedAt: string;
   teamId: string;
+  team: {
+    name: string;
+  };
 }
 
-interface User {
+export interface User {
   id: string;
   email: string;
   name: string;
@@ -34,34 +38,34 @@ export default function MyTeamPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [userResponse, teamResponse] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
-            credentials: "include",
-          }),
-          fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/team`, {
-            credentials: "include",
-          }),
-        ]);
+  const fetchData = async () => {
+    try {
+      const [userResponse, teamResponse] = await Promise.all([
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
+          credentials: "include",
+        }),
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/team`, {
+          credentials: "include",
+        }),
+      ]);
 
-        if (!userResponse.ok || !teamResponse.ok) {
-          throw new Error("Failed to fetch data");
-        }
-
-        const userData = await userResponse.json();
-        const teamData = await teamResponse.json();
-
-        setUserData(userData.user);
-        setPlayers(teamData);
-      } catch (err) {
-        setError("Something went wrong while fetching your data");
-      } finally {
-        setLoading(false);
+      if (!userResponse.ok || !teamResponse.ok) {
+        throw new Error("Failed to fetch data");
       }
-    };
 
+      const userData = await userResponse.json();
+      const teamData = await teamResponse.json();
+
+      setUserData(userData.user);
+      setPlayers(teamData);
+    } catch (err) {
+      setError("Something went wrong while fetching your data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [router]);
 
@@ -80,6 +84,7 @@ export default function MyTeamPage() {
         team_name={userData?.team.name}
       />
       <div className="px-12 gap-4 flex flex-col py-6">
+        <h2 className="text-2xl font-semibold">My Team</h2>
         {players.map((player) => (
           <PlayerCard
             key={player.id}
@@ -88,9 +93,11 @@ export default function MyTeamPage() {
             price={player.price}
             available_for_transfer={player.available_for_transfer}
             id={player.id}
+            team={player.team}
           />
         ))}
       </div>
+      <FieldDisplay players={players} />
     </div>
   );
 }

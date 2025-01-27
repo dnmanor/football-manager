@@ -1,5 +1,6 @@
 import React from "react";
 import TopNavigation from "../components/TopNavigation";
+import { FilterProvider } from "../context/FilterContext";
 
 const DashboarLayout = ({
   children,
@@ -8,8 +9,10 @@ const DashboarLayout = ({
 }>) => {
   return (
     <main className="flex flex-col">
-      <TopNavigation />
-      {children}
+      <FilterProvider>
+        <TopNavigation />
+        {children}
+      </FilterProvider>
     </main>
   );
 };

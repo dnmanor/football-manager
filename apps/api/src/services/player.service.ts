@@ -11,10 +11,10 @@ const DEFAULT_CONFIG = {
 };
 
 const PRICE_RANGES = {
-  GOALKEEPER: { min: 1000000, max: 5000000 },
-  DEFENDER: { min: 1000000, max: 8000000 },
-  MIDFIELDER: { min: 2000000, max: 10000000 },
-  FORWARD: { min: 3000000, max: 15000000 },
+  GOALKEEPER: { min: 1000000, max: 500000 },
+  DEFENDER: { min: 1000000, max: 800000 },
+  MIDFIELDER: { min: 2000000, max: 1000000 },
+  FORWARD: { min: 3000000, max: 1500000 },
 };
 
 const ARTIFICIAL_FIVE_SECONDS_DELAY = 5000;
