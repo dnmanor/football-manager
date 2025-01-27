@@ -19,6 +19,10 @@ yarn install
 docker compose up -d
 ```
 
+- add .env file to api with using the .env.example (keep the same or make details match the docker compose setup)
+
+- add .env file to web app with using the .env.example (keep the same)
+
 - run migrations
 ```bash
 cd apps/api && npx prisma migrate dev
