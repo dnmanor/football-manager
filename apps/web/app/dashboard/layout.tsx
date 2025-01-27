@@ -9,10 +9,8 @@ const DashboarLayout = ({
 }>) => {
   return (
     <main className="flex flex-col">
-      <FilterProvider>
-        <TopNavigation />
-        {children}
-      </FilterProvider>
+      <TopNavigation />
+      {children}
     </main>
   );
 };

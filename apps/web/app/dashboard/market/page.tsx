@@ -5,6 +5,7 @@ import {Player} from "../my-team/page";
 import PlayerCard from "../../components/PlayerCard";
 import {useFilter} from "../../context/FilterContext";
 import {Input} from "@repo/ui/components/input";
+import {FilterProvider} from "../../context/FilterContext";
 
 interface User {
   id: string;
@@ -68,7 +69,7 @@ const MarketPage = () => {
   });
 
   if (!user || !user.team) {
-    return <div>Loading...</div>; // Prevent rendering until user and team data are available
+    return <div>Loading...</div>;
   }
 
   const handleRemovePlayer = (playerId: string) => {
@@ -104,7 +105,7 @@ const MarketPage = () => {
           </div>
         </div>
         <div className="flex flex-wrap gap-4">
-          {user?.team?.budget !== undefined &&
+          {user?.team?.budget &&
             filteredPlayers.map((player) => (
               <PlayerCard
                 key={player.id}
@@ -122,4 +123,12 @@ const MarketPage = () => {
   );
 };
 
-export default MarketPage;
+const MarketWithProvider = () => {
+  return (
+    <FilterProvider>
+      <MarketPage />
+    </FilterProvider>
+  );
+};
+
+export default MarketWithProvider;

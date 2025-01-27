@@ -42,7 +42,9 @@ export function PurchasePlayerButton({
       );
 
       if (!response.ok) {
-        throw new Error("Failed to purchase player");
+        const errorData = await response.json();
+        toast.error("Failed to purchase player: " + errorData.error);
+        return
       }
 
       toast.success("Player purchased successfully!");
